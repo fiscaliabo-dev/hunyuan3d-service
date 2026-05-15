@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-multipart
+Pillow
+torch
+torchvision
+huggingface_hub
+trimesh
+numpy
+scipy
+opencv-python
+einops
+omegaconf
