@@ -1,20 +1,23 @@
-import tempfile, os, base64
+import tempfile, traceback
 from pathlib import Path
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from gradio_client import Client, handle_file
 from PIL import Image
-import replicate
+import sys
 
-app = FastAPI(
-    title="Hunyuan3D-2.1 API",
-    description="Generación de modelos 3D - Siempre disponible",
-    version="2.0.0",
-    docs_url="/docs",
-)
+app = FastAPI(title="Hunyuan3D API", version="1.0.0", docs_url="/docs")
 
-REPLICATE_TOKEN = os.environ.get("REPLICATE_TOKEN", "")
-if REPLICATE_TOKEN:
-    replicate.Client(api_token=REPLICATE_TOKEN)
+print("Iniciando servidor...", flush=True)
+
+# Intentar conectar a HuggingFace
+try:
+    print("Conectando a HuggingFace...", flush=True)
+    client = Client("tencent/Hunyuan3D-2.1")
+    print("✅ Conectado a HuggingFace", flush=True)
+except Exception as e:
+    print(f"❌ Error HuggingFace: {e}", flush=True)
+    client = None
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -23,42 +26,38 @@ async def root():
 
 @app.post("/generate-3d/")
 async def generate_3d(file: UploadFile = File(...)):
-    if not REPLICATE_TOKEN:
-        return JSONResponse(
-            {"error": "Token de Replicate no configurado"},
-            status_code=500
-        )
+    print(f"Recibido archivo: {file.filename}", flush=True)
     
-    with tempfile.TemporaryDirectory() as tmp:
-        # Guardar imagen
-        img = Image.open(file.file).convert("RGB")
-        img_path = Path(tmp) / "input.png"
-        img.save(img_path)
-        
-        # Subir a Replicate
-        with open(img_path, "rb") as f:
-            data = base64.b64encode(f.read()).decode()
-        
-        # Llamar a la API de Replicate
-        try:
-            output = replicate.run(
-                "tencent/hunyuan3d-2.1:model_hash",
-                input={"image": f"data:image/png;base64,{data}"}
+    if client is None:
+        return JSONResponse({"error": "Servicio no disponible. HuggingFace está caído."}, status_code=503)
+    
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            img = Image.open(file.file).convert("RGB")
+            path = Path(tmp) / "input.png"
+            img.save(path)
+            print(f"Imagen guardada: {path}", flush=True)
+            
+            print("Llamando a HuggingFace...", flush=True)
+            result = client.predict(
+                input_image=handle_file(str(path)),
+                api_name="/predict"
             )
+            print(f"Resultado recibido: {type(result)}", flush=True)
             
-            if output:
-                # Descargar resultado
-                import requests
-                r = requests.get(output)
-                out_path = Path(tmp) / "model.glb"
-                with open(out_path, "wb") as f:
-                    f.write(r.content)
-                return FileResponse(str(out_path), filename="model.glb")
+            if result and result[0]:
+                out = Path(tmp) / "model.glb"
+                with open(out, "wb") as f:
+                    f.write(result[0])
+                print(f"Modelo guardado: {out.stat().st_size} bytes", flush=True)
+                return FileResponse(str(out), filename="model.glb")
             
-            return JSONResponse({"error": "No se pudo generar"}, status_code=500)
-        except Exception as e:
-            return JSONResponse({"error": str(e)}, status_code=500)
+            return JSONResponse({"error": "No se pudo generar el modelo"}, status_code=500)
+    
+    except Exception as e:
+        print(f"ERROR: {traceback.format_exc()}", flush=True)
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "provider": "Replicate"}
+    return {"status": "ok" if client else "degraded"}
