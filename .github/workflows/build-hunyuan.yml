@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          node-version: 24
       
       - name: Build Docker image
         run: docker build -t fiscaliabo/hunyuan3d:latest .
