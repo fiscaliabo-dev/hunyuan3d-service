@@ -11,7 +11,5 @@ jobs:
       - name: Build Docker image
         run: docker build -t fiscaliabo/hunyuan3d:latest .
       
-      - name: Push to Docker Hub
-        run: |
-          echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u fiscaliabo --password-stdin
-          docker push fiscaliabo/hunyuan3d:latest
+      - name: Login and Push
+        run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u fiscaliabo --password-stdin && docker push fiscaliabo/hunyuan3d:latest
