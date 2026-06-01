@@ -26,7 +26,7 @@ pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
     low_vram_mode=True,
     device=device
 )
-logger.info("✅ Modelo cargado")
+logger.info("Modelo cargado")
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
