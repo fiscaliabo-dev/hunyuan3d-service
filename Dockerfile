@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y python3 python3-pip libgl1 libglib2.0-0
 WORKDIR /app
 
 RUN pip3 install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cu124
-RUN pip3 install --no-cache-dir "numpy<2" scipy scikit-image transformers fastapi uvicorn python-multipart Pillow
+RUN pip3 install --no-cache-dir "numpy<2" scipy pymeshlab scikit-image transformers fastapi uvicorn python-multipart Pillow
 RUN pip3 install --no-cache-dir trimesh opencv-python einops omegaconf huggingface_hub
 RUN pip3 install --no-cache-dir diffusers peft accelerate safetensors jaxtyping
 
