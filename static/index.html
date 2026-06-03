@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><title>TripoSR</title>
+<style>body{font-family:Arial;max-width:500px;margin:50px auto;text-align:center}button{padding:10px 20px;background:#4CAF50;color:#fff;border:none;cursor:pointer}</style>
+</head>
+<body>
+<h1>TripoSR</h1>
+<input type="file" id="f" accept="image/*"><br><br>
+<button onclick="gen()">Generar 3D</button>
+<div id="s"></div>
+<script>
+async function gen(){
+const f=document.getElementById('f').files[0];if(!f)return;
+const d=new FormData();d.append('file',f);
+document.getElementById('s').textContent='Generando...';
+const r=await fetch('/generate-3d/',{method:'POST',body:d});
+if(r.ok){const b=await r.blob();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='modelo.glb';a.click();document.getElementById('s').textContent='✅ Listo'}
+else{document.getElementById('s').textContent='❌ Error'}
+}
+</script>
+</body>
+</html>
