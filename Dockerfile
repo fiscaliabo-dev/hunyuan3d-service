@@ -1,6 +1,6 @@
 FROM pytorch/pytorch:2.3.0-cuda12.1-cudnn8-runtime
 
-RUN apt-get update && apt-get install -y libgl1 libglib2.0-0 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libgl1 libglib2.0-0 git && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
