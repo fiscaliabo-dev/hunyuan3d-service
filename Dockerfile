@@ -5,7 +5,14 @@ RUN apt-get update && apt-get install -y libgl1 libglib2.0-0 git && rm -rf /var/
 WORKDIR /app
 
 RUN pip install --no-cache-dir fastapi uvicorn python-multipart Pillow trimesh
-RUN pip install --no-cache-dir git+https://github.com/VAST-AI-Research/TripoSR.git
+
+# Clonar TripoSR y copiar solo el código
+RUN git clone https://github.com/VAST-AI-Research/TripoSR.git /tmp/triposr && \
+    cp -r /tmp/triposr/tsr /app/tsr && \
+    rm -rf /tmp/triposr
+
+# Instalar dependencias de TripoSR
+RUN pip install --no-cache-dir diffusers transformers accelerate
 
 COPY ./api_server.py /app/
 COPY ./static /app/static
