@@ -5,6 +5,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: docker build -t fiscaliabo/triposr:latest .
+      - run: docker build -t fiscaliabo/triposr:v1 .
       - run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u fiscaliabo --password-stdin
-      - run: docker push fiscaliabo/triposr:latest
+      - run: docker push fiscaliabo/triposr:v1
