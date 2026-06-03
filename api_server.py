@@ -24,7 +24,7 @@ pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
     subfolder="hunyuan3d-dit-v2-1",
     vae_subfolder="hunyuan3d-vae-v2-1",
     low_vram_mode=True,
-    device=device
+    device=device,
     use_safetensors=False 
 )
 logger.info("Modelo cargado")
