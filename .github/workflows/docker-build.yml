@@ -1,0 +1,10 @@
+name: Build TripoSR
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: docker build -t fiscaliabo/triposr:latest .
+      - run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u fiscaliabo --password-stdin
+      - run: docker push fiscaliabo/triposr:latest
