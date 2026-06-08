@@ -10,7 +10,6 @@ RUN pip install --no-cache-dir fastapi uvicorn python-multipart Pillow trimesh d
 RUN git clone https://github.com/VAST-AI-Research/TripoSR.git /tmp/triposr && \
     cp -r /tmp/triposr/tsr /app/tsr && \
     rm -rf /tmp/triposr
-
 # Instalar dependencias de TripoSR
 RUN pip install --no-cache-dir diffusers transformers accelerate
 
