@@ -4,7 +4,8 @@ RUN apt-get update && apt-get install -y libgl1 libglib2.0-0 git && rm -rf /var/
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir fastapi uvicorn python-multipart Pillow trimesh diffusers transformers accelerate einops omegaconf torchmcubes
+RUN pip install --no-cache-dir fastapi uvicorn python-multipart Pillow trimesh diffusers transformers accelerate einops omegaconf
+RUN pip install --no-cache-dir git+https://github.com/tatsy/torchmcubes.git
 
 # Clonar TripoSR y copiar solo el código
 RUN git clone https://github.com/VAST-AI-Research/TripoSR.git /tmp/triposr && \
