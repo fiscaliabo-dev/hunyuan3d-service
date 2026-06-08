@@ -1,0 +1,8 @@
+checkpoints/
+wheels/
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.whl
+venv_hunyuan/
