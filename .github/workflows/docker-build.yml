@@ -1,0 +1,10 @@
+name: Build InstantMesh
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: docker build -t fiscaliabo/instantmesh:latest .
+      - run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u fiscaliabo --password-stdin
+      - run: docker push fiscaliabo/instantmesh:latest
