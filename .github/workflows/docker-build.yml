@@ -7,6 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - run: docker build -t fiscaliabo/triposr:v3 .
+      - run: docker build --no-cache -t fiscaliabo/triposr:v3 .
       - run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u fiscaliabo --password-stdin
       - run: docker push fiscaliabo/triposr:v3
